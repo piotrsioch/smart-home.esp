@@ -1,41 +1,40 @@
-#include <DHT.h>
-#include <WiFi.h>
 #include "credentials.h"
-#include <HTTPClient.h>
+#include "movement-detection.h"
+#include "http-functions.h" 
+#include "globals.h"
+
 #include <map>
 #include <string>
+#include <DHT.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
 
-#define timeSeconds 2
-#define LED_PIN 16
-#define MOTION_SENSOR_PIN 17
-#define SMOKE_SENSOR_PIN 32
-#define REED_SWITCH 22
 
-std::map<std::string, std::string> endpointMap = {
-  {"reedSwitch", "/sensor/reed-switch"},
-  {"anotherEndpoint", "/another/path"}
-};
+// std::map<std::string, std::string> endpointMap = {
+//   {"reedSwitch", "/sensor/reed-switch"},
+//   {"anotherEndpoint", "/another/path"}
+// };
 
 DHT dht(26, DHT11);
 
 WiFiClient client;
 
-const long INTERUPT_INTERVAL = 2000;
+// const long INTERUPT_INTERVAL = 2000;
 
-unsigned long now = millis();
-unsigned long previousMillis = millis();
-unsigned long lastTrigger = 0;
-boolean startTimer = false;
-boolean motion = false;
+// unsigned long now = millis();
+// unsigned long previousMillis = millis();
+// unsigned long lastTrigger = 0;
+// boolean startTimer = false;
+// boolean motion = false;
 
-bool previousState = HIGH;
+// bool previousState = HIGH;
 
 
-void IRAM_ATTR detectMovement() {
-  digitalWrite(LED_PIN, HIGH);
-  startTimer = true;
-  lastTrigger = millis();
-}
+// void IRAM_ATTR detectMovement() {
+//   digitalWrite(LED_PIN, HIGH);
+//   startTimer = true;
+//   lastTrigger = millis();
+// }
 
 void setup() {
   Serial.begin(115200);
@@ -113,33 +112,33 @@ void loop() {
   }
 }
 
-void sendRequestToEndpoint(const std::string& endpointName, const std::string& data) {
-  if (endpointMap.find(endpointName) != endpointMap.end()) {
-    std::string path = endpointMap[endpointName];
+// void sendRequestToEndpoint(const std::string& endpointName, const std::string& data) {
+//   if (endpointMap.find(endpointName) != endpointMap.end()) {
+//     std::string path = endpointMap[endpointName];
 
-    sendRequest(path, data);
-  } else {
-    Serial.println("There is no endpoint with given name");
-  }
-}
+//     sendRequest(path, data);
+//   } else {
+//     Serial.println("There is no endpoint with given name");
+//   }
+// }
 
-void sendRequest(const std::string& path, const std::string& data) {
-  HTTPClient http;
+// void sendRequest(const std::string& path, const std::string& data) {
+//   HTTPClient http;
 
-  String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(path.c_str());
-  Serial.println(url);
+//   String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(path.c_str());
+//   Serial.println(url);
 
-  http.begin(url.c_str());
-  http.addHeader("Content-Type", "application/json");
+//   http.begin(url.c_str());
+//   http.addHeader("Content-Type", "application/json");
 
-  int httpResponseCode = http.POST(data.c_str());
+//   int httpResponseCode = http.POST(data.c_str());
 
-  if (httpResponseCode > 0) {
-    String response = http.getString();
-    Serial.println("Server response: " + response);
-  } else {
-    Serial.println("Error occured while sending data to server");
-  }
+//   if (httpResponseCode > 0) {
+//     String response = http.getString();
+//     Serial.println("Server response: " + response);
+//   } else {
+//     Serial.println("Error occured while sending data to server");
+//   }
 
-  http.end();
-}
+//   http.end();
+// }
