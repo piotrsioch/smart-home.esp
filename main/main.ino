@@ -1,4 +1,9 @@
 #include <DHT.h>
+#include <WiFi.h>
+#include "credentials.h"
+#include <HTTPClient.h>
+#include <map>
+#include <string>
 
 #define timeSeconds 2
 #define LED_PIN 16
@@ -6,7 +11,14 @@
 #define SMOKE_SENSOR_PIN 32
 #define REED_SWITCH 22
 
+std::map<std::string, std::string> endpointMap = {
+  {"reedSwitch", "/sensor/reed-switch"},
+  {"anotherEndpoint", "/another/path"}
+};
+
 DHT dht(26, DHT11);
+
+WiFiClient client;
 
 const long INTERUPT_INTERVAL = 2000;
 
@@ -39,6 +51,18 @@ void setup() {
 
   // REED SWITCH SETUP
   pinMode(REED_SWITCH, INPUT_PULLUP);
+
+  WiFi.begin(ssid, password);
+
+  Serial.print("Connecting with wifi.");
+  Serial.println(ssid);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+
+  Serial.println("Connected with wifi!");
 }
 
 void loop() {
@@ -57,19 +81,24 @@ void loop() {
   if(now - previousMillis >= INTERUPT_INTERVAL) {
     previousMillis = now;
 
+    std::string endpointName = "reedSwitch";
+    std::string data = "{\"isOpened\": true}";
+
+    sendRequestToEndpoint(endpointName, data);
+
     float temp = dht.readTemperature();
     float humidity = dht.readHumidity();
     int digitalNumber = analogRead(SMOKE_SENSOR_PIN); //from 0 to 4095
 
-    int actualState = digitalRead(REED_SWITCH); // Odczytaj stan zestyku
+    int actualState = digitalRead(REED_SWITCH);
 
-    if (actualState != previousState) { // Sprawdź, czy stan się zmienił
+    if (actualState != previousState) {
       if (actualState == LOW) {
-        Serial.println("Zamknięto");
+        Serial.println("CLOSED");
       } else {
-        Serial.println("Otwarto");
+        Serial.println("OPENED");
       }
-      previousState = actualState; // Zapisz bieżący stan jako poprzedni
+      previousState = actualState;
     }
 
     // Serial.print("Temp: ");
@@ -82,4 +111,35 @@ void loop() {
     // Serial.print("From smoke sensor: ");
     // Serial.println(digitalNumber);
   }
+}
+
+void sendRequestToEndpoint(const std::string& endpointName, const std::string& data) {
+  if (endpointMap.find(endpointName) != endpointMap.end()) {
+    std::string path = endpointMap[endpointName];
+
+    sendRequest(path, data);
+  } else {
+    Serial.println("There is no endpoint with given name");
+  }
+}
+
+void sendRequest(const std::string& path, const std::string& data) {
+  HTTPClient http;
+
+  String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(path.c_str());
+  Serial.println(url);
+
+  http.begin(url.c_str());
+  http.addHeader("Content-Type", "application/json");
+
+  int httpResponseCode = http.POST(data.c_str());
+
+  if (httpResponseCode > 0) {
+    String response = http.getString();
+    Serial.println("Server response: " + response);
+  } else {
+    Serial.println("Error occured while sending data to server");
+  }
+
+  http.end();
 }
