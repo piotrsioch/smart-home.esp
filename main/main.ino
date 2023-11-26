@@ -9,32 +9,9 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-
-// std::map<std::string, std::string> endpointMap = {
-//   {"reedSwitch", "/sensor/reed-switch"},
-//   {"anotherEndpoint", "/another/path"}
-// };
-
 DHT dht(26, DHT11);
 
 WiFiClient client;
-
-// const long INTERUPT_INTERVAL = 2000;
-
-// unsigned long now = millis();
-// unsigned long previousMillis = millis();
-// unsigned long lastTrigger = 0;
-// boolean startTimer = false;
-// boolean motion = false;
-
-// bool previousState = HIGH;
-
-
-// void IRAM_ATTR detectMovement() {
-//   digitalWrite(LED_PIN, HIGH);
-//   startTimer = true;
-//   lastTrigger = millis();
-// }
 
 void setup() {
   Serial.begin(115200);
@@ -111,34 +88,3 @@ void loop() {
     // Serial.println(digitalNumber);
   }
 }
-
-// void sendRequestToEndpoint(const std::string& endpointName, const std::string& data) {
-//   if (endpointMap.find(endpointName) != endpointMap.end()) {
-//     std::string path = endpointMap[endpointName];
-
-//     sendRequest(path, data);
-//   } else {
-//     Serial.println("There is no endpoint with given name");
-//   }
-// }
-
-// void sendRequest(const std::string& path, const std::string& data) {
-//   HTTPClient http;
-
-//   String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(path.c_str());
-//   Serial.println(url);
-
-//   http.begin(url.c_str());
-//   http.addHeader("Content-Type", "application/json");
-
-//   int httpResponseCode = http.POST(data.c_str());
-
-//   if (httpResponseCode > 0) {
-//     String response = http.getString();
-//     Serial.println("Server response: " + response);
-//   } else {
-//     Serial.println("Error occured while sending data to server");
-//   }
-
-//   http.end();
-// }
