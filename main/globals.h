@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #define timeSeconds 2
+#define LIGHT_PIN 14
 #define LED_PIN 16
 #define MOTION_SENSOR_PIN 17
 #define SMOKE_SENSOR_PIN 32

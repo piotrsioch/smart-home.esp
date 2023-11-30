@@ -28,6 +28,9 @@ void setup() {
   // REED SWITCH SETUP
   pinMode(REED_SWITCH, INPUT_PULLUP);
 
+  // LIGHT SETUP
+  pinMode(LIGHT_PIN, OUTPUT);
+
   WiFi.begin(ssid, password);
 
   Serial.print("Connecting with wifi.");
@@ -60,7 +63,9 @@ void loop() {
     std::string endpointName = "reedSwitch";
     std::string data = "{\"isOpened\": true}";
 
-    sendRequestToEndpoint(endpointName, data);
+    // sendRequestToEndpoint(endpointName, data);
+
+    getAndSetLightState();
 
     float temp = dht.readTemperature();
     float humidity = dht.readHumidity();
