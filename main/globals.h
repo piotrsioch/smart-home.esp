@@ -1,7 +1,10 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#define timeSeconds 2
+#include <map>
+#include <string>
+
+#define timeSeconds 5
 #define LIGHT_PIN 14
 #define LED_PIN 16
 #define MOTION_SENSOR_PIN 17
@@ -14,6 +17,7 @@ extern unsigned long previousMillis;
 extern unsigned long lastTrigger;
 extern bool startTimer;
 extern bool motion;
-extern bool previousState;
+extern bool previousReedSwitchState;
+extern std::map<std::string, std::string> endpointMap;
 
 #endif

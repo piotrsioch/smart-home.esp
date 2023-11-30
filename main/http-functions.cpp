@@ -5,11 +5,6 @@
 #include <map>
 #include <Arduino.h>
 
-std::map<std::string, std::string> endpointMap = {
-  {"reedSwitch", "/sensor/reed-switch"},
-  {"getLightState", "/light-state"}
-};
-
 bool ledState = false;
 
 void sendRequest(const std::string& path, const std::string& data) {
@@ -24,7 +19,6 @@ void sendRequest(const std::string& path, const std::string& data) {
 
   if (httpResponseCode > 0) {
     String response = http.getString();
-    Serial.println("Server response: " + response);
   } else {
     Serial.println("Error occured while sending data to server");
   }
@@ -54,7 +48,6 @@ void getAndSetLightState() {
         int httpResponseCode = http.GET();
         if (httpResponseCode > 0) {
             String response = http.getString();
-            Serial.println(response);
 
             int index = response.indexOf("lightState");
             if (index != -1) {
@@ -63,15 +56,10 @@ void getAndSetLightState() {
 
                 if (startIndex != -1 && endIndex != -1) {
                     String state = response.substring(startIndex, endIndex);
-                    Serial.println(state);
-                    if (state == "off") {
-                      Serial.println("In off");
-                      ledState = false;
-                      digitalWrite(LIGHT_PIN, LOW);
-                    } else if (state == "on") {
-                      Serial.println("In on");
-                      ledState = true;
-                      digitalWrite(LIGHT_PIN, HIGH);
+
+                    if ((state == "off" && ledState) || (state == "on" && !ledState)) {
+                      ledState = !ledState;
+                      digitalWrite(LIGHT_PIN, ledState ? HIGH : LOW);
                     }
                 }
             }

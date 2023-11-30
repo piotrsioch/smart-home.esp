@@ -7,4 +7,11 @@ unsigned long previousMillis = millis();
 unsigned long lastTrigger = 0;
 bool startTimer = false;
 bool motion = false;
-bool previousState = HIGH;
+bool previousReedSwitchState = HIGH;
+std::map<std::string, std::string> endpointMap = {
+  {"reedSwitch", "/sensors/reed-switch"},
+  {"dhtSensor", "/sensors/dht"},
+  {"smokeSensor", "/sensors/smoke-sensor"},
+  {"pirSensor", "/sensors/pir-sensor"},
+  {"getLightState", "/light-state"},
+};
