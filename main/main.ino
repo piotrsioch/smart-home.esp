@@ -8,36 +8,11 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-WiFiClient client;
-
 void setup() {
   Serial.begin(115200);
 
-  // DHT SETUP
-  initializeDHT();
-
-  // MOTION SENSOR SETUP
-  pinMode(MOTION_SENSOR_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(MOTION_SENSOR_PIN), detectMovement, RISING);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);
-
-  // REED SWITCH SETUP
-  pinMode(REED_SWITCH, INPUT_PULLUP);
-
-  // LIGHT SETUP
-  pinMode(LIGHT_PIN, OUTPUT);
-
-  WiFi.begin(ssid, password);
-
-  Serial.print("Connecting with wifi.");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
-  }
-
-  Serial.println("Connected with wifi!");
+  initializeSensors();
+  initializeWifi();
 }
 
 void loop() {
@@ -57,9 +32,6 @@ void loop() {
   if(now - previousMillis >= INTERUPT_INTERVAL) {
     previousMillis = now;
 
-    getAndSetLightState();
-    handleReedSwitchState();
-    handleDhtSensor();
-    handleSmokeSensor();
+    handleSensors();
   }
 }

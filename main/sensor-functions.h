@@ -4,6 +4,8 @@
 #include <Arduino.h>
 
 void IRAM_ATTR detectMovement();
+void initializeSensors();
+void handleSensors();
 void handleReedSwitchState();
 void initializeDHT();
 void handleDhtSensor();

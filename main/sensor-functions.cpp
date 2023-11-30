@@ -9,6 +9,23 @@ DHT dht(26, DHT11);
 float previousTemperature = 0;
 float previousHumidity = 0;
 
+void initializeSensors() {
+  // DHT SETUP
+  initializeDHT();
+
+  // MOTION SENSOR SETUP
+  pinMode(MOTION_SENSOR_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(MOTION_SENSOR_PIN), detectMovement, RISING);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
+
+  // REED SWITCH SETUP
+  pinMode(REED_SWITCH, INPUT_PULLUP);
+
+  // LIGHT SETUP
+  pinMode(LIGHT_PIN, OUTPUT);
+}
+
 void initializeDHT() {
   dht.begin();
   delay(2000);
@@ -16,26 +33,27 @@ void initializeDHT() {
 
 void IRAM_ATTR detectMovement() {
   digitalWrite(LED_PIN, HIGH);
+  
   startTimer = true;
   lastTrigger = millis();
 }
 
 void handleReedSwitchState() {
-    int actualState = digitalRead(REED_SWITCH);
+  int actualState = digitalRead(REED_SWITCH);
 
-    if (actualState != previousReedSwitchState) {
-        std::string endpoint = endpointMap["reedSwitch"];
-        std::string data = "";
+  if (actualState != previousReedSwitchState) {
+    std::string endpoint = endpointMap["reedSwitch"];
+    std::string data = "";
 
-        if (actualState == LOW) {
-            data = "{\"isOpened\": false}";
-        } else {
-            data = "{\"isOpened\": true}";
-        }
-
-        sendRequest(endpoint, data);
-        previousReedSwitchState = actualState;
+    if (actualState == LOW) {
+      data = "{\"isOpened\": false}";
+    } else {
+      data = "{\"isOpened\": true}";
     }
+
+    sendRequest(endpoint, data);
+    previousReedSwitchState = actualState;
+  }
 }
 
 void handleDhtSensor() {
@@ -69,4 +87,11 @@ void handlePirSensor() {
   std::string data = "{\"movementDetected\": true}";
 
   sendRequest(endpoint, data);
+}
+
+void handleSensors() {
+  getAndSetLightState();
+  handleReedSwitchState();
+  handleDhtSensor();
+  handleSmokeSensor();
 }

@@ -5,7 +5,22 @@
 #include <map>
 #include <Arduino.h>
 
+WiFiClient client;
+
 bool ledState = false;
+
+void initializeWifi() {
+  WiFi.begin(ssid, password);
+
+  Serial.print("Connecting with wifi.");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+
+  Serial.println("Connected with wifi!");
+}
 
 void sendRequest(const std::string& path, const std::string& data) {
   HTTPClient http;
@@ -37,36 +52,37 @@ void sendRequestToEndpoint(const std::string& endpointName, const std::string& d
 }
 
 void getAndSetLightState() {
-    if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-        std::string endpoint = endpointMap["getLightState"];
-       
-        String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str());
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    std::string endpoint = endpointMap["getLightState"];
+  
+    String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str());
 
-        http.begin(url);
+    http.begin(url);
 
-        int httpResponseCode = http.GET();
-        if (httpResponseCode > 0) {
-            String response = http.getString();
+    int httpResponseCode = http.GET();
+    
+    if (httpResponseCode > 0) {
+      String response = http.getString();
 
-            int index = response.indexOf("lightState");
-            if (index != -1) {
-                int startIndex = response.indexOf(":", index) + 2;
-                int endIndex = response.indexOf("\"", startIndex);
+      int index = response.indexOf("lightState");
+      if (index != -1) {
+        int startIndex = response.indexOf(":", index) + 2;
+        int endIndex = response.indexOf("\"", startIndex);
 
-                if (startIndex != -1 && endIndex != -1) {
-                    String state = response.substring(startIndex, endIndex);
+          if (startIndex != -1 && endIndex != -1) {
+            String state = response.substring(startIndex, endIndex);
 
-                    if ((state == "off" && ledState) || (state == "on" && !ledState)) {
-                      ledState = !ledState;
-                      digitalWrite(LIGHT_PIN, ledState ? HIGH : LOW);
-                    }
-                }
+            if ((state == "off" && ledState) || (state == "on" && !ledState)) {
+              ledState = !ledState;
+              digitalWrite(LIGHT_PIN, ledState ? HIGH : LOW);
             }
-        } else {
-            Serial.println("Error during HTTP request");
+          }
         }
-
-        http.end();
+    } else {
+      Serial.println("Error during HTTP request");
     }
+
+    http.end();
+  }
 }
