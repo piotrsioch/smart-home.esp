@@ -8,5 +8,6 @@ void initializeWifi();
 void sendRequest(const std::string& path, const std::string& data);
 void sendRequestToEndpoint(const std::string& endpointName, const std::string& data);
 void getAndSetLightState();
+void getAndSetAlarmState();
 
 #endif

@@ -11,5 +11,7 @@ void initializeDHT();
 void handleDhtSensor();
 void handleSmokeSensor();
 void handlePirSensor();
+void turnOnAlarm();
+void handleChangeAlarmState();
 
 #endif

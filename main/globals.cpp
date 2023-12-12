@@ -15,5 +15,7 @@ std::map<std::string, std::string> endpointMap = {
   {"pirSensor", "/pir-sensor/add-data"},
   {"getLightState", "/light/get-state"},
   {"getAlarmState", "/alarm/get-state"},
+  {"changeAlarmState", "/alarm/change-state"},
 };
 String alarmState = "";
+bool changeAlarmState = false;

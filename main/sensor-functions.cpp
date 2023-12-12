@@ -10,6 +10,8 @@ DHT dht(26, DHT11);
 float previousTemperature = 0;
 float previousHumidity = 0;
 
+static unsigned long lastRequestTime = 0;
+
 void initializeSensors() {
   // DHT SETUP
   initializeDHT();
@@ -33,10 +35,13 @@ void initializeDHT() {
 }
 
 void IRAM_ATTR detectMovement() {
-  digitalWrite(LED_PIN, HIGH);
-  
-  startTimer = true;
-  lastTrigger = millis();
+  if (alarmState == "armed") {
+    digitalWrite(LED_PIN, HIGH);
+    
+    startTimer = true;
+    lastTrigger = millis();
+    changeAlarmState = true;
+  }
 }
 
 void handleReedSwitchState() {
@@ -73,13 +78,16 @@ void handleDhtSensor() {
 }
 
 void handleSmokeSensor() {
+  unsigned long currentMillis = millis(); 
   int digitalNumber = analogRead(SMOKE_SENSOR_PIN); //from 0 to 4095
 
-  if(digitalNumber > 150) {
+  if(digitalNumber > 150 && currentMillis - lastRequestTime >= 60000) {
     std::string endpoint = endpointMap["smokeSensor"];
     String data = "{\"sensorId\": \"" +  smokeSensorId + "\", \"value\": \"" + String(digitalNumber) + "\"}";
 
     sendRequest(endpoint, data.c_str());
+
+    lastRequestTime = currentMillis; 
   }
 }
 
@@ -91,9 +99,26 @@ void handlePirSensor() {
   sendRequest(endpoint, data.c_str());
 }
 
+void turnOnAlarm() {
+  std::string endpoint = endpointMap["changeAlarmState"];
+
+  String data = "{\"sensorId\": \"" + alarmSensorId + "\", \"state\": \"on\"}";
+
+  sendRequest(endpoint, data.c_str());
+}
+
+void handleChangeAlarmState() {
+  if (changeAlarmState) {
+    turnOnAlarm();
+    changeAlarmState = false;
+  }
+}
+
 void handleSensors() {
   getAndSetLightState();
+  getAndSetAlarmState();
   handleReedSwitchState();
   handleDhtSensor();
   handleSmokeSensor();
+  handleChangeAlarmState();
 }

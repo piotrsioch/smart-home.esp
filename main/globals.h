@@ -19,6 +19,7 @@ extern unsigned long lastTrigger;
 extern bool startTimer;
 extern bool motion;
 extern bool previousReedSwitchState;
+extern bool changeAlarmState;
 extern std::map<std::string, std::string> endpointMap;
 extern String alarmState;
 

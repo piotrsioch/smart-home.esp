@@ -13,5 +13,6 @@ extern const String dhtSensorId;
 extern const String lightSensorId;
 extern const String pirSensorId;
 extern const String smokeSensorId;
+extern const String alarmSensorId;
 
 #endif
