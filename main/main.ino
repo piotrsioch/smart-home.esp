@@ -3,11 +3,6 @@
 #include "http-functions.h" 
 #include "globals.h"
 
-#include <map>
-#include <string>
-#include <WiFi.h>
-#include <HTTPClient.h>
-
 void setup() {
   Serial.begin(115200);
 

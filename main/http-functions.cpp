@@ -65,7 +65,7 @@ void getAndSetLightState() {
     if (httpResponseCode > 0) {
       String response = http.getString();
 
-      int index = response.indexOf("lightState");
+      int index = response.indexOf("isOn");
       if (index != -1) {
         int startIndex = response.indexOf(":", index) + 2;
         int endIndex = response.indexOf("\"", startIndex);
@@ -73,7 +73,7 @@ void getAndSetLightState() {
           if (startIndex != -1 && endIndex != -1) {
             String state = response.substring(startIndex, endIndex);
 
-            if ((state == "off" && ledState) || (state == "on" && !ledState)) {
+            if ((state == "false" && ledState) || (state == "true" && !ledState)) {
               ledState = !ledState;
               digitalWrite(LIGHT_PIN, ledState ? HIGH : LOW);
             }
@@ -86,3 +86,35 @@ void getAndSetLightState() {
     http.end();
   }
 }
+
+void getAndSetAlarmState() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    std::string endpoint = endpointMap["getAlarmState"];
+
+    String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str());
+
+    http.begin(url);
+
+    int httpResponseCode = http.GET();
+    
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+
+      int index = response.indexOf("state");
+      if (index != -1) {
+        int startIndex = response.indexOf(":", index) + 2;
+        int endIndex = response.indexOf("\"", startIndex);
+
+        if (startIndex != -1 && endIndex != -1) {
+          alarmState = response.substring(startIndex, endIndex);
+        }
+      }
+    } else {
+      Serial.println("Error during HTTP request");
+    }
+
+    http.end();
+  }
+}
+

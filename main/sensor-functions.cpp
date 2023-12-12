@@ -2,6 +2,7 @@
 #include "http-functions.h"
 #include "globals.h"
 #include <Arduino.h>
+#include "credentials.h"
 #include <DHT.h>
 
 DHT dht(26, DHT11);
@@ -43,15 +44,15 @@ void handleReedSwitchState() {
 
   if (actualState != previousReedSwitchState) {
     std::string endpoint = endpointMap["reedSwitch"];
-    std::string data = "";
+    String data = "";
 
     if (actualState == LOW) {
-      data = "{\"isOpened\": false}";
+      data = "{\"sensorId\": \"" + reedSwitchId + "\", \"isOpened\": false}";
     } else {
-      data = "{\"isOpened\": true}";
+      data = "{\"sensorId\": \"" + reedSwitchId + "\", \"isOpened\": true}";
     }
 
-    sendRequest(endpoint, data);
+    sendRequest(endpoint, data.c_str());
     previousReedSwitchState = actualState;
   }
 }
@@ -62,7 +63,7 @@ void handleDhtSensor() {
 
     if(temp != previousTemperature || humidity != previousHumidity) {
       std::string endpoint = endpointMap["dhtSensor"];
-      String data = "{\"temperature\": \"" + String(temp) + "\", \"humidity\": \"" + String(humidity) + "\"}";
+      String data = "{\"sensorId\": \"" +  dhtSensorId + "\", \"temperature\": \"" + String(temp) + "\", \"humidity\": \"" + String(humidity) + "\"}";
       
       previousTemperature = temp;
       previousHumidity = humidity;
@@ -76,7 +77,7 @@ void handleSmokeSensor() {
 
   if(digitalNumber > 150) {
     std::string endpoint = endpointMap["smokeSensor"];
-    String data = "{\"digitalNumber\": \"" + String(digitalNumber) + "\"}";
+    String data = "{\"sensorId\": \"" +  smokeSensorId + "\", \"value\": \"" + String(digitalNumber) + "\"}";
 
     sendRequest(endpoint, data.c_str());
   }
@@ -84,9 +85,10 @@ void handleSmokeSensor() {
 
 void handlePirSensor() {
   std::string endpoint = endpointMap["pirSensor"];
-  std::string data = "{\"movementDetected\": true}";
 
-  sendRequest(endpoint, data);
+  String data = "{\"sensorId\": \"" + pirSensorId  + "\"}";
+
+  sendRequest(endpoint, data.c_str());
 }
 
 void handleSensors() {

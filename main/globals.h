@@ -1,6 +1,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include <Arduino.h>
 #include <map>
 #include <string>
 
@@ -19,5 +20,6 @@ extern bool startTimer;
 extern bool motion;
 extern bool previousReedSwitchState;
 extern std::map<std::string, std::string> endpointMap;
+extern String alarmState;
 
 #endif

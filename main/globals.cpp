@@ -9,9 +9,11 @@ bool startTimer = false;
 bool motion = false;
 bool previousReedSwitchState = HIGH;
 std::map<std::string, std::string> endpointMap = {
-  {"reedSwitch", "/sensors/reed-switch"},
-  {"dhtSensor", "/sensors/dht"},
-  {"smokeSensor", "/sensors/smoke-sensor"},
-  {"pirSensor", "/sensors/pir-sensor"},
-  {"getLightState", "/light-state"},
+  {"reedSwitch", "/reed-switch/add-data"},
+  {"dhtSensor", "/dht-sensor/add-data"},
+  {"smokeSensor", "/smoke-sensor/add-data"},
+  {"pirSensor", "/pir-sensor/add-data"},
+  {"getLightState", "/light/get-state"},
+  {"getAlarmState", "/alarm/get-state"},
 };
+String alarmState = "";
