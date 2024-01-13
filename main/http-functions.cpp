@@ -25,7 +25,7 @@ void initializeWifi() {
 void sendRequest(const std::string& path, const std::string& data) {
   HTTPClient http;
 
-  String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(path.c_str());
+  String url = String(serverIP) + ":" + String(serverPort) + String(path.c_str());
 
   http.begin(url.c_str());
   http.addHeader("Content-Type", "application/json");
@@ -56,7 +56,7 @@ void getAndSetLightState() {
     HTTPClient http;
     std::string endpoint = endpointMap["getLightState"];
   
-    String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str()) + "?sensorId=" + String(lightSensorId);
+    String url = String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str()) + "?sensorId=" + String(lightSensorId);
 
     http.begin(url);
 
@@ -104,7 +104,7 @@ void getAndSetAlarmState() {
     HTTPClient http;
     std::string endpoint = endpointMap["getAlarmState"];
 
-    String url = "http://" + String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str())  + "?sensorId=" + String(alarmSensorId);;
+    String url = String(serverIP) + ":" + String(serverPort) + String(endpoint.c_str())  + "?sensorId=" + String(alarmSensorId);;
 
     http.begin(url);
 

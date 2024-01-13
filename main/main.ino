@@ -21,7 +21,7 @@ void loop() {
   if(startTimer && (now - lastTrigger > (timeSeconds*1000))) {
     digitalWrite(LED_PIN, LOW);
     startTimer = false;
-    motion = false;
+    motion = false; 
   }
 
   if(now - previousMillis >= INTERUPT_INTERVAL) {

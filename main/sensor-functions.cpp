@@ -81,7 +81,7 @@ void handleSmokeSensor() {
   unsigned long currentMillis = millis(); 
   int digitalNumber = analogRead(SMOKE_SENSOR_PIN); //from 0 to 4095
 
-  if(digitalNumber > 150 && currentMillis - lastRequestTime >= 60000) {
+  if(digitalNumber > 20 && currentMillis - lastRequestTime >= 10000) {
     std::string endpoint = endpointMap["smokeSensor"];
     String data = "{\"sensorId\": \"" +  smokeSensorId + "\", \"value\": \"" + String(digitalNumber) + "\"}";
 
